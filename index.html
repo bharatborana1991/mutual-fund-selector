@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Personalized Mutual Fund Selector</title>
+  <meta name="description" content="An educational tool that recommends mutual fund categories based on your profile." />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <h1>Personalized Mutual Fund Selector</h1>
+      <p class="tagline">Answer a few questions. Get a clear, category-level plan aligned with your risk and time horizon.</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card" id="wizard-card" aria-label="Onboarding form">
+      <div class="progress">
+        <div class="progress-bar" id="progress-bar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
+      </div>
+      <form id="wizard" novalidate>
+        <!-- Step 1: Age -->
+        <section class="step active" data-step="1" aria-labelledby="step1-title">
+          <h2 id="step1-title">Step 1 of 5 — Your Age</h2>
+          <div class="field">
+            <label for="age">Age <span class="req">*</span></label>
+            <div class="with-info">
+              <input type="number" id="age" name="age" min="16" max="100" inputmode="numeric" placeholder="e.g., 30" required aria-describedby="age-help" />
+              <button type="button" class="info" aria-label="What does age affect?" data-tooltip="Age helps us infer your investment horizon. Younger users can usually take more risk due to longer time in the market.">i</button>
+            </div>
+            <p id="age-help" class="help">Used to determine your investment horizon.</p>
+            <p class="error" id="age-error" role="alert" aria-live="polite"></p>
+          </div>
+          <div class="actions">
+            <button type="button" class="btn primary next">Next</button>
+          </div>
+        </section>
+
+        <!-- Step 2: Income & Expenses -->
+        <section class="step" data-step="2" aria-labelledby="step2-title">
+          <h2 id="step2-title">Step 2 of 5 — Income & Expenses</h2>
+          <div class="grid-2">
+            <div class="field">
+              <label for="income">Monthly Income (Post‑Tax) <span class="req">*</span></label>
+              <div class="with-info">
+                <input type="number" id="income" name="income" min="0" step="0.01" placeholder="e.g., 75000" required aria-describedby="income-help" />
+                <button type="button" class="info" aria-label="Income help" data-tooltip="Your take‑home salary after taxes and deductions.">i</button>
+              </div>
+              <p id="income-help" class="help">Use your average monthly take‑home amount.</p>
+              <p class="error" id="income-error" role="alert" aria-live="polite"></p>
+            </div>
+
+            <div class="field">
+              <label for="expenses">Monthly Expenses <span class="req">*</span></label>
+              <div class="with-info">
+                <input type="number" id="expenses" name="expenses" min="0" step="0.01" placeholder="e.g., 45000" required aria-describedby="expenses-help" />
+                <button type="button" class="info" aria-label="Expenses help" data-tooltip="All living costs—rent, food, utilities, transport, etc.">i</button>
+              </div>
+              <p id="expenses-help" class="help">Average of your typical monthly spend.</p>
+              <p class="error" id="expenses-error" role="alert" aria-live="polite"></p>
+            </div>
+          </div>
+          <div class="actions">
+            <button type="button" class="btn ghost prev">Back</button>
+            <button type="button" class="btn primary next">Next</button>
+          </div>
+        </section>
+
+        <!-- Step 3: Loans / EMI -->
+        <section class="step" data-step="3" aria-labelledby="step3-title">
+          <h2 id="step3-title">Step 3 of 5 — Loans or EMIs</h2>
+          <fieldset class="field">
+            <legend>Do you have existing loans or EMIs? <span class="req">*</span></legend>
+            <div class="with-info">
+              <div class="radio-group">
+                <label><input type="radio" name="hasEmi" value="no" required /> No</label>
+                <label><input type="radio" name="hasEmi" value="yes" /> Yes</label>
+              </div>
+              <button type="button" class="info" aria-label="What is EMI?" data-tooltip="EMI stands for Equated Monthly Installment. It’s a fixed payment you make each month towards a loan.">i</button>
+            </div>
+            <p class="error" id="hasEmi-error" role="alert" aria-live="polite"></p>
+          </fieldset>
+
+          <div class="field" id="emiAmountField" hidden>
+            <label for="emiAmount">Total Monthly EMI Amount</label>
+            <div class="with-info">
+              <input type="number" id="emiAmount" name="emiAmount" min="0" step="0.01" placeholder="e.g., 15000" aria-describedby="emi-help" />
+              <button type="button" class="info" aria-label="EMI amount help" data-tooltip="Add up all your EMIs (home, car, personal loan, etc.).">i</button>
+            </div>
+            <p id="emi-help" class="help">Enter 0 if your EMIs vary but average out to zero.</p>
+            <p class="error" id="emiAmount-error" role="alert" aria-live="polite"></p>
+          </div>
+
+          <div class="actions">
+            <button type="button" class="btn ghost prev">Back</button>
+            <button type="button" class="btn primary next">Next</button>
+          </div>
+        </section>
+
+        <!-- Step 4: Risk Tolerance -->
+        <section class="step" data-step="4" aria-labelledby="step4-title">
+          <h2 id="step4-title">Step 4 of 5 — Risk Tolerance</h2>
+          <fieldset class="field">
+            <legend>Select the option that best describes you <span class="req">*</span></legend>
+            <div class="risk-options">
+              <label class="risk-card">
+                <input type="radio" name="risk" value="LOW" required />
+                <span class="risk-title">Low</span>
+                <span class="risk-desc">I prioritize protecting my initial investment, even if it means lower returns. I am uncomfortable with seeing my investment value drop.</span>
+              </label>
+
+              <label class="risk-card">
+                <input type="radio" name="risk" value="MEDIUM" />
+                <span class="risk-title">Medium</span>
+                <span class="risk-desc">I am willing to take some calculated risks for better returns than a savings account, but I want to avoid major losses.</span>
+              </label>
+
+              <label class="risk-card">
+                <input type="radio" name="risk" value="HIGH" />
+                <span class="risk-title">High</span>
+                <span class="risk-desc">I am aiming for the highest possible returns and am comfortable with significant market fluctuations and the risk of short‑term losses for long‑term growth.</span>
+              </label>
+            </div>
+            <p class="error" id="risk-error" role="alert" aria-live="polite"></p>
+          </fieldset>
+
+          <div class="actions">
+            <button type="button" class="btn ghost prev">Back</button>
+            <button type="button" class="btn primary next">Next</button>
+          </div>
+        </section>
+
+        <!-- Step 5: Review & Results -->
+        <section class="step" data-step="5" aria-labelledby="step5-title">
+          <h2 id="step5-title">Step 5 of 5 — Review & Get Your Plan</h2>
+          <p class="help">We’ll use your answers to estimate your investable surplus, pick a time horizon, and adjust your risk profile if needed.</p>
+          <div class="actions">
+            <button type="button" class="btn ghost prev">Back</button>
+            <button type="submit" class="btn success">Show My Recommendations</button>
+          </div>
+        </section>
+      </form>
+    </section>
+
+    <!-- Results -->
+    <section id="results" class="card" hidden aria-live="polite">
+      <h2>Your Personalized Summary</h2>
+      <div class="summary-grid">
+        <div class="summary-item">
+          <h3>Investable Surplus</h3>
+          <p id="surplus"></p>
+          <p class="muted small">Calculated as Income − Expenses − EMI.</p>
+        </div>
+        <div class="summary-item">
+          <h3>Investment Horizon</h3>
+          <p id="horizon"></p>
+          <p class="muted small">Based on your age.</p>
+        </div>
+        <div class="summary-item">
+          <h3>Final Risk Profile</h3>
+          <p id="finalRisk"></p>
+          <p class="muted small">We start with your stated risk tolerance and adjust for EMIs, surplus, and horizon.</p>
+        </div>
+      </div>
+
+      <div class="alert" id="alerts" hidden></div>
+
+      <div class="chart-wrap">
+        <canvas id="allocationChart" width="400" height="400" role="img" aria-label="Recommended allocation chart"></canvas>
+      </div>
+
+      <div class="categories" id="categories"></div>
+
+      <div class="cta">
+        <p><strong>Next steps:</strong> Use these categories to shortlist specific funds on reputable platforms (examples only): AMFI, Morningstar India, Value Research, or your broker’s platform (e.g., Zerodha Coin, Groww). Compare expense ratios and track records before investing.</p>
+      </div>
+
+      <div class="divider"></div>
+
+      <section id="finder" aria-labelledby="finder-title">
+        <h3 id="finder-title">Find Specific Funds (Beta)</h3>
+        <p class="small muted">This uses your final category to query your own backend (Vercel) which calls OpenAI to research and cite sources. Your API key stays on the server.</p>
+        <div class="finder-controls">
+          <label>API Endpoint
+            <input type="url" id="apiEndpoint" placeholder="https://YOUR-VERCEL-PROJECT.vercel.app/api/find-funds" />
+          </label>
+          <label>Plan
+            <select id="plan">
+              <option value="Direct" selected>Direct</option>
+              <option value="Regular">Regular</option>
+            </select>
+          </label>
+          <label>Max Expense Ratio (%)
+            <input type="number" id="maxEr" min="0" step="0.01" value="0.40" />
+          </label>
+          <label>Min AUM (₹ Cr)
+            <input type="number" id="minAum" min="0" step="1" value="1000" />
+          </label>
+          <button id="runFinder" class="btn primary">Find Specific Funds</button>
+        </div>
+
+        <div id="finderStatus" class="small muted" aria-live="polite"></div>
+        <div class="table-wrap" id="fundTableWrap" hidden>
+          <table id="fundTable" class="table">
+            <thead>
+              <tr>
+                <th>Scheme</th>
+                <th>Plan</th>
+                <th>Category</th>
+                <th>Expense %</th>
+                <th>AUM (₹ Cr)</th>
+                <th>1Y</th>
+                <th>3Y CAGR</th>
+                <th>5Y CAGR</th>
+                <th>Notes</th>
+                <th>Citations</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <div class="disclaimer" role="note">
+        <p><strong>Disclaimer:</strong> This is an educational tool. The recommendations are based on the information you provided and are not financial advice. Mutual fund investments are subject to market risks. Please consult a <strong>SEBI‑registered</strong> financial advisor before making any investment decisions.</p>
+      </div>
+
+      <div class="actions end">
+        <button id="editAnswers" class="btn ghost">Edit Answers</button>
+        <button id="startOver" class="btn">Start Over</button>
+        <button id="printPlan" class="btn">Print / Save as PDF</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container small muted">
+      <p>© <span id="year"></span> Personalized Mutual Fund Selector — Educational Use Only.</p>
+    </div>
+  </footer>
+
+  <!-- Chart.js (for the allocation chart) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
